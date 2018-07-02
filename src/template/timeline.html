@@ -1,0 +1,236 @@
+<!-- START: Breadcrumbs -->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/admin">
+                <i class="fas fa-home"></i> {{_ 'Admin'}}
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/admin/system/model/{{schema.name}}/search">
+                <i class="{{schema.icon}}"></i> {{schema.plural}}
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="fas fa-futbol"></i> {{_ 'Activity'}}
+        </li>
+    </ol>
+</nav>
+<!-- END: Breadcrumbs -->
+<!-- START: Main Content Container -->
+<section class="main-padding">
+    {{#request 'session' 'me'}}
+        {{#unless ../create}}
+            <h2>{{../schema.singular}} Activity</h2>
+        {{else}}
+            <section class="schema mb-3">
+                <form
+                    action="/admin/{{../create.schema}}/activity"
+                    method="post"
+                />
+                    <!-- START: WYSIWYG -->
+                    <textarea
+                        class="form-control"
+                        data-do="wysiwyg"
+                        name="{{../create.name}}"
+                    ></textarea>
+                    <!-- END: WYSIWYG -->
+
+                    {{#if ../schema_id}}
+                        <!-- START: Schema ID -->
+                        <input
+                            type="hidden"
+                            name="{{../schema.primary}}"
+                            value="{{../schema_id}}"
+                        />
+                        <!-- END: Schema ID -->
+                    {{/if}}
+                    <!-- START: Redirect URI -->
+                    <input
+                        type="hidden"
+                        name="redirect_uri"
+                        value="{{#if ../admin~}}
+                            /admin{{~/if}}/
+                            {{~../schema.name}}/activity?{{query}}"
+                    />
+                    <!-- END: Redirect URI -->
+                    <input
+                        class="btn btn-info btn-submit"
+                        type="submit"
+                        value="Create {{../create.schema}}"
+                    />
+                </form>
+            </section>
+        {{/unless}}
+    {{else}}
+        <h2>{{schema.singular}} Activity</h2>
+    {{/request}}
+    <section class="timeline-wrapper">
+        <div class="timeline">
+            <!-- Line component -->
+            <div class="line"></div>
+            {{#each history}}
+                <article class="panel panel-default {{history_type}}">
+                    {{#scope ../schemas activity_schema}}
+                        <!-- START: Icon -->
+                        <div class="panel-heading icon">
+                            {{#if this.icon}}
+                                <i class="{{this.icon}}"></i>
+                            {{else}}
+                                <i class="fas fa-question"></i>
+                            {{/if}}
+                        </div>
+                        <!-- END: Icon -->
+                        {{#if this.detail}}
+                            {{#scope
+                                ../../details
+                                ../activity_schema
+                                ../activity_schema_primary
+                            }}
+                                <!-- START: Activity Title -->
+                                <div class="panel-title">
+                                    <a href="{{~#if ../../../admin~}}/admin
+                                        {{~/if~}}/system/model/
+                                        {{~../../activity_schema~}}
+                                        /detail/{{~../../activity_schema_primary~}}"
+                                    >
+                                        {{../../history_activity}}
+                                    </a>
+                                    {{~#if this.name~}}
+                                        &nbsp;by
+                                        {{#scope
+                                            ../../this
+                                            ../../../schema.primary
+                                        }}
+                                            <a href="{{~#if ../../../../admin~}}/admin
+                                                {{~/if~}}/system/model/
+                                                {{~../../../../schema.name~}}
+                                                /detail/{{this}}"
+                                            >
+                                                <span class="name">{{../this.name}}</span>
+                                            </a>
+                                        {{/scope}}
+                                    {{~/if~}}
+                                </div>
+                                <!-- END: Activity Title -->
+                                <!-- START: Activity Content -->
+                                <div class="panel-body">
+                                        <div class="main-content">
+                                            {{#if this.image}}
+                                                {{#scope
+                                                    ../../this
+                                                    ../../../schema.primary
+                                                }}
+                                                    <a
+                                                        href="{{~#if ../../../../admin~}}/admin
+                                                            {{~/if~}}/system/model/
+                                                            {{~../../../../schema.name~}}
+                                                            /detail/{{this}}"
+                                                        class="image pr-4"
+                                                    >
+                                                        <img
+                                                            alt="{{../this.name}}"
+                                                            src="{{../this.image}}"
+                                                        />
+                                                    </a>
+                                                {{/scope}}
+                                            {{/if}}
+                                            <div class="content">
+                                                <div class="excerpt">
+                                                    {{{excerpt this.detail 10}}} ...
+                                                    <a
+                                                        href="javascript:void(0);"
+                                                        class="text-muted"
+                                                        data-do="excerpt"
+                                                        data-on="click"
+                                                    >
+                                                        {{_ 'see more'}}
+                                                    </a>
+                                                </div>
+                                                <div class="whole">
+                                                    {{{~this.detail~}}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <!--  Date/Time -->
+                                    <span class="card-datetime">
+                                        {{relative ../../history_created}}
+                                    </span>
+                                </div>
+                                <!-- END: Activity Content -->
+                            {{/scope}}
+                        {{else}}
+                            <!-- START: Activity Content -->
+                            <div class="panel-body">
+                                <p class="value">
+                                    <a href="{{~#if ../../admin~}}/admin
+                                        {{~/if~}}/system/model/
+                                        {{~../activity_schema~}}
+                                        /detail/{{~../activity_schema_primary~}}"
+                                    >
+                                        {{~../history_activity~}}
+                                    </a>
+
+                                    {{#if ../image}}
+                                        &nbsp;by
+                                    {{else}}
+                                        {{#if ../name}}
+                                            &nbsp;by
+                                        {{/if}}
+                                    {{/if}}
+
+                                    {{#scope
+                                        ../this
+                                        ../../schema.primary
+                                    }}
+                                        <a href="{{~#if ../../../admin~}}/admin
+                                            {{~/if~}}/system/model/
+                                            {{~../../../schema.name~}}
+                                            /detail/{{this}}"
+                                        >
+                                            {{#if ../../image}}
+                                                <img
+                                                    src="{{../../image}}"
+                                                    height="25px"
+                                                    {{#if ../name}}
+                                                        alt="{{../../name}}"
+                                                    {{/if}}
+                                                />
+                                            {{else}}
+                                                {{~#if ../../name}}
+                                                    <span class="name">
+                                                        {{~../../name~}}
+                                                    </span>
+                                                {{/if~}}
+                                            {{/if}}
+                                        </a>
+                                    {{/scope}}
+                                </p>
+                                <!--  Date/Time -->
+                                <span class="card-datetime">
+                                    {{relative ../history_created}}
+                                </span>
+                            </div>
+                            <!-- END: Activity Content -->
+                        {{/if}}
+                    {{/scope}}
+                </article>
+            {{/each}}
+            {{#unless history}}
+                <article class="panel panel-info panel-outline">
+                    <!-- START: Icon -->
+                    <div class="panel-heading icon text-muted">
+                        <i class="fa fa-exclamation-triangle"></i>
+                    </div>
+                    <!-- END: Icon -->
+                    <!-- START: Body -->
+                    <div class="panel-body text-muted">
+                        {{_ 'No recorded activities yet.'}}
+                    </div>
+                    <!-- END: Body -->
+                </article>
+            {{/unless}}
+        </div>
+    </section>
+</section>
+<!-- END: Main Content Container -->
