@@ -144,10 +144,6 @@ $this->get('/admin/:schema/activity', function ($request, $response) {
     // get ids of detailed schemas
     foreach ($data['history'] as $key => $value) {
         $schemas[$value['activity_schema']]['ids'][] = $value['activity_schema_primary'];
-
-        // $data['history'][$key]['name'] = $compiled($value);
-        // $data['history'][$key]['image'] = isset($value[$request->getStage('schema').'_image']) ?
-        //     $value[$request->getStage('schema').'_image'] : null;
     }
 
     $details = [];
@@ -190,8 +186,6 @@ $this->get('/admin/:schema/activity', function ($request, $response) {
             ]);
 
             $details[$schema][$value[$schemas[$schema]['primary']]] = $value;
-
-            // unset($details[$schema][$key]);
         }
     }
 
@@ -245,7 +239,13 @@ $this->get('/admin/:schema/activity', function ($request, $response) {
         );
     $body = $this
         ->package('cradlephp/cradle-activity')
-        ->template('timeline', $data);
+        ->template(
+            'timeline',
+            $data,
+            [],
+            $response->getPage('template_root'),
+            $response->getPage('partials_root')
+        );
 
     // Set Content
     $response
